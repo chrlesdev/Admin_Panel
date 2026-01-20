@@ -4,6 +4,11 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1"
   },
+  "scripts": {
+    "dev": "nodemon",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/node": "^25.0.9",
