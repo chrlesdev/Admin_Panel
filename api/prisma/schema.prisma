@@ -14,29 +14,100 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  email       String   @unique
+  id          String  @id @default(uuid())
+  email       String  @unique
   name        String
-  password    String   @unique
-  phoneNumber Int      @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Store {
-  id        String @id @default(uuid())
-  storeName String
+  password    String? @unique
+  googleid    String?
+  phoneNumber String? @unique
+  shops       Shop[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model product {
-  id           String @id @default(uuid())
-  productName  String
-  productStock Int
-  productPrice Int
+model Shop {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  ShopName String
+  platForm String
+
+  products Product[]
+  sales    Sale[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Product {
+  id String @id @default(uuid())
+
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  productName String
+
+  hasVariant Boolean   @default(false) // in case product didnt have variant
+  variants   Variant[]
+
+  productStock        Int
+  productCostPrice    Float? // optional because cost price is a private matter 
+  productSellingPrice Float
+
+  sales Sale[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shopId])
+}
+
+model Variant {
+  id String @id @default(uuid())
+
+  variantName  String
+  stock        Int    @default(0)
+  costPrice    Float? // optional because cost price is a private matter
+  sellingPrice Float
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  sale Sale[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+}
+
+model Sale {
+  id     String @id @default(uuid())
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id])
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  variantId String
+  variant   Variant @relation(fields: [variantId], references: [id])
+
+  quatity    Int
+  totalPrice Float
+  totalCost  Float?
+  profit     Float
+
+  resi     String?
+  saleDate DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shopId])
+  @@index([productId])
+  @@index([saleDate])
 }
