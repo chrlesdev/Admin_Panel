@@ -32,8 +32,8 @@ model Shop {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  ShopName String
-  platForm String
+  shopName String
+  platform String
 
   products Product[]
   sales    Sale[]
@@ -87,19 +87,21 @@ model Variant {
 }
 
 model Sale {
-  id     String @id @default(uuid())
+  id String @id @default(uuid())
+
   shopId String
-  shop   Shop   @relation(fields: [shopId], references: [id])
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
 
   productId String
-  product   Product @relation(fields: [productId], references: [id])
-  variantId String
-  variant   Variant @relation(fields: [variantId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  quatity    Int
+  variantId String?
+  variant   Variant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  quantity   Int
   totalPrice Float
   totalCost  Float?
-  profit     Float
+  profit     Float?
 
   resi     String?
   saleDate DateTime
