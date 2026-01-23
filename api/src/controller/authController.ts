@@ -1,19 +1,30 @@
-import "dotenv/config";
-import { PrismaMariaDb } from "@prisma/adapter-mariadb";
-import { PrismaClient } from "../generated/prisma/client";
 import { Request, Response, NextFunction } from "express";
-
-const adapter = new PrismaMariaDb({
-  host: process.env.DATABASE_HOST || "localhost",
-  port: 3306,
-  connectionLimit: 5,
-  user: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
-});
-
-const prisma = new PrismaClient({ adapter });
+import { authUser } from "../schema/authSchema";
+import { prisma } from "../lib/prisma";
+import { parse } from "node:path";
 
 export async function signUp(req: Request, res: Response) {
-  // const parsedData
+  try {
+    const parsedData = authUser.parse(req.body);
+    const { name, email, phoneNumber, password } = parsedData;
+
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (existingUser) return res.status(409).json({ message: "User already logged in" });
+
+    const newUser = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password,
+        phoneNumber,
+      },
+    });
+
+    return res.status(201).json({ message: "userCreated", data: newUser });
+  } catch (error) {}
 }
