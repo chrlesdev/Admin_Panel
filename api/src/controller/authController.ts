@@ -3,7 +3,6 @@ import { authUser } from "../schema/authSchema";
 import { prisma } from "../lib/prisma";
 import jwt from "jsonwebtoken";
 import { hash, genSalt } from "bcryptjs";
-import { ZodError } from "zod";
 
 export async function signUp(req: Request, res: Response) {
   try {
@@ -48,15 +47,13 @@ export async function signUp(req: Request, res: Response) {
       { expiresIn: "7d" }, // ← Changed to 7 days
     );
 
-    // Send token as httpOnly cookie (more secure)
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // HTTPS only in prod
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // Send response (without password)
     return res.status(201).json({
       message: "User created successfully",
       user: {
@@ -67,14 +64,6 @@ export async function signUp(req: Request, res: Response) {
       },
     });
   } catch (error) {
-    // Handle Zod validation errors
-    if (error instanceof ZodError) {
-      return res.status(400).json({
-        error: "Validation error",
-      });
-    }
-
-    // Handle other errors
     console.error("SignUp error:", error);
     return res.status(500).json({
       error: "Internal server error",

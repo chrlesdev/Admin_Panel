@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import authRoute from "../src/routes/authRoute";
 
 const app = express();
 app.use(express.json());
@@ -12,6 +13,9 @@ app.use(
     credentials: true, // for cookies
   }),
 );
+
+app.use("/api/v1/", authRoute);
+
 const PORT = 8000;
 
 app.listen(PORT, () => {
