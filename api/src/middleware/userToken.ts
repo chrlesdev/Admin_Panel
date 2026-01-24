@@ -1,8 +1,10 @@
 import { Request, Response, NextFunction } from "express";
+import { RequestWithUserId, AuthenticatedUser } from "../types";
 import jwt from "jsonwebtoken";
 
 export async function verifyUserToken(req: Request, res: Response, next: NextFunction) {
   try {
+    console.log("token here");
     const token = req.cookies.token;
     if (!token) {
       return res.status(401).json({ message: "please login again" });
@@ -12,6 +14,10 @@ export async function verifyUserToken(req: Request, res: Response, next: NextFun
 
     if (!verifiedUser) {
       return res.status(401).json({ message: "token expired, please login again" });
+    }
+
+    if (typeof verifiedUser !== "string") {
+      (req as RequestWithUserId).user = verifiedUser as AuthenticatedUser;
     }
 
     next();

@@ -1,3 +1,4 @@
+import { platform } from "node:os";
 import { z } from "zod";
 
 export const authUser = z.object({
@@ -7,4 +8,9 @@ export const authUser = z.object({
   phoneNumber: z.string().regex(/^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/, {
     message: "Invalid phone number format",
   }),
+});
+
+export const shopSchema = z.object({
+  shopName: z.string().min(1, { message: "shop name is required" }),
+  platform: z.string().min(1, { message: "platform name is required" }),
 });
