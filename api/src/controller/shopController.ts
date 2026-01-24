@@ -12,6 +12,9 @@ export async function shopCreate(req: Request, res: Response) {
       },
     });
 
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
     const shopData = shopSchema.parse(req.body);
     const { shopName, platform } = shopData;
 

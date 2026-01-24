@@ -14,3 +14,10 @@ export const shopSchema = z.object({
   shopName: z.string().min(1, { message: "shop name is required" }),
   platform: z.string().min(1, { message: "platform name is required" }),
 });
+
+export const productSchema = z.object({
+  productName: z.string().min(1, { message: "product name is required" }),
+  productStock: z.int(),
+  productCostPrice: z.float32().optional(),
+  productSellingPrice: z.float32(),
+});
