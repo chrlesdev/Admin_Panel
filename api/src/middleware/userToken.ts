@@ -20,7 +20,6 @@ export async function verifyUserToken(req: Request, res: Response, next: NextFun
     }
 
     (req as RequestWithUserId).user = verifiedUser as AuthenticatedUser;
-    next();
 
     next();
   } catch (error) {

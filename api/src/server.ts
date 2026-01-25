@@ -5,7 +5,6 @@ import cookieParser from "cookie-parser";
 import { verifyUserToken } from "./middleware/userToken";
 
 import authRoute from "./routes/authRoute";
-import loginRoute from "./routes/authRoute";
 import shopRoute from "./routes/shopRoute";
 import productRoute from "./routes/prouctRoute";
 
