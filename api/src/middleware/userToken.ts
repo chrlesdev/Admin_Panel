@@ -15,12 +15,18 @@ export async function verifyUserToken(req: Request, res: Response, next: NextFun
       return res.status(401).json({ message: "token expired, please login again" });
     }
 
-    if (typeof verifiedUser !== "string") {
-      (req as RequestWithUserId).user = verifiedUser as AuthenticatedUser;
+    if (typeof verifiedUser === "string") {
+      return res.status(401).json({ message: "Invalid token" });
     }
+
+    (req as RequestWithUserId).user = verifiedUser as AuthenticatedUser;
+    next();
 
     next();
   } catch (error) {
-    console.error("error : ", error);
+    console.error("Auth error:", error);
+    return res.status(500).json({
+      message: "Authentication failed",
+    });
   }
 }

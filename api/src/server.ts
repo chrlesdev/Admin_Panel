@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { verifyUserToken } from "./middleware/userToken";
 
 import authRoute from "./routes/authRoute";
+import loginRoute from "./routes/authRoute";
 import shopRoute from "./routes/shopRoute";
 import productRoute from "./routes/prouctRoute";
 
@@ -19,7 +20,7 @@ app.use(
   }),
 );
 
-app.use("/api/v1/", authRoute);
+app.use("/api/v1", authRoute);
 app.use("/api/v1/shop", verifyUserToken, shopRoute);
 app.use("/api/v1/product", verifyUserToken, productRoute);
 

@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import { PrismaClient, Prisma } from "../src/generated/prisma/client";
+import { genSalt, hash } from "bcryptjs";
 
 const adapter = new PrismaMariaDb({
   host: process.env.DATABASE_HOST || "localhost",
@@ -14,6 +15,9 @@ const adapter = new PrismaMariaDb({
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
+  const salt = await genSalt(10);
+  const hashedPassword = await hash("password", salt);
+
   console.log("🌱 Seeding database...");
 
   try {
@@ -23,6 +27,7 @@ async function main() {
     console.error("❌ Connection failed:", error);
     throw error;
   }
+
   // Clear existing data (optional - be careful in production!)
   await prisma.sale.deleteMany();
   await prisma.variant.deleteMany();
@@ -34,7 +39,7 @@ async function main() {
     {
       name: "Alice Seller",
       email: "alice@mail.com",
-      password: "password123",
+      password: hashedPassword,
       phoneNumber: "081234567890",
       shops: {
         create: [
@@ -95,7 +100,7 @@ async function main() {
     {
       name: "Bob Merchant",
       email: "bob@mail.com",
-      password: "password456",
+      password: hashedPassword,
       phoneNumber: "082345678901", // Fixed: unique number
       shops: {
         create: {
@@ -116,7 +121,7 @@ async function main() {
     {
       name: "Charlie Store",
       email: "charlie@mail.com",
-      password: "password789",
+      password: hashedPassword,
       phoneNumber: "083456789012", // Fixed: unique number
       shops: {
         create: {

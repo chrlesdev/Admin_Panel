@@ -1,37 +1,29 @@
 import { Request, Response } from "express";
-import { shopSchema } from "../schema/validSchema";
-import { prisma } from "../lib/prisma";
-import { RequestWithUserId } from "../types";
+import { shopSchema } from "../../schema/validSchema";
+import { prisma } from "../../lib/prisma";
+import { RequestWithUserId } from "../../types";
 
 export async function shopCreate(req: Request, res: Response) {
   try {
-    const id = (req as RequestWithUserId).user?.id;
-    const user = await prisma.user.findUnique({
-      where: {
-        id: id,
-      },
-    });
+    const userId = (req as RequestWithUserId).user?.id;
 
-    if (!user) {
+    if (!userId) {
       return res.status(404).json({ message: "User not found" });
     }
     const shopData = shopSchema.parse(req.body);
     const { shopName, platform } = shopData;
 
-    await prisma.shop.create({
+    const newShop = await prisma.shop.create({
       data: {
         shopName,
         platform,
-        user: {
-          connect: {
-            id: user?.id,
-          },
-        },
+        userId,
       },
     });
 
     return res.status(200).json({
       message: "Shop Created",
+      shop: newShop,
       ok: true,
     });
   } catch (error) {

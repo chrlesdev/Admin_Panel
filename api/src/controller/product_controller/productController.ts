@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { prisma } from "../lib/prisma";
-import { productSchema } from "../schema/validSchema";
+import { prisma } from "../../lib/prisma";
+import { productSchema } from "../../schema/validSchema";
 
 export async function productCreate(req: Request, res: Response) {
   try {
@@ -9,7 +9,9 @@ export async function productCreate(req: Request, res: Response) {
       return res.status(400).json({ message: "invalid shop" });
     }
 
-    if (!shopId) return "yo your shop in nowhere to be found";
+    if (!shopId) {
+      return res.status(400).json({ message: "Shop ID required" });
+    }
 
     const productData = productSchema.parse(req.body);
     const { productName, productStock, productCostPrice, productSellingPrice } = productData;
