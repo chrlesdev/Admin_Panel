@@ -6,7 +6,7 @@ export async function productCreate(req: Request, res: Response) {
   try {
     const shopId = req.params.shopId;
     if (typeof shopId !== "string") {
-      return res.status(400).json({ message: "invalid shop" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     if (!shopId) {
