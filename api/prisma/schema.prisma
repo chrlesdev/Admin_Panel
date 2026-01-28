@@ -26,6 +26,13 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+model Token {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  createdAt DateTime @default(now())
+  expiredAt DateTime
+}
+
 model Shop {
   id String @id @default(uuid())
 
