@@ -27,3 +27,10 @@ export const productSchema = z.object({
   productCostPrice: z.float32().optional(),
   productSellingPrice: z.float32(),
 });
+
+export const variantScema = z.object({
+  variantName: z.string().min(1, { message: "variant name is required" }),
+  stock: z.int(),
+  sellingPrice: z.float32(),
+  costPrice: z.float32().optional(),
+});
