@@ -3,7 +3,7 @@ import { shopSchema } from "../../schema/validSchema";
 import { prisma } from "../../lib/prisma";
 import { RequestWithUserId } from "../../types";
 
-export async function shopCreate(req: Request, res: Response) {
+export async function createShop(req: Request, res: Response) {
   try {
     const userId = (req as RequestWithUserId).user?.id;
 

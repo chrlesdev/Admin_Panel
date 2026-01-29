@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "../../lib/prisma";
 
-export async function getProduct(req: Request, res: Response) {
+export async function getSingleProduct(req: Request, res: Response) {
   try {
     const productId = req.params.productId;
     if (typeof productId !== "string") {

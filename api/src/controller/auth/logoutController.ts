@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { prisma } from "../lib/prisma";
+import { prisma } from "../../lib/prisma";
 import jwt from "jsonwebtoken";
 
 export async function logout(req: Request, res: Response) {

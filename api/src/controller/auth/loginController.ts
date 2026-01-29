@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { loginSchema } from "../schema/validSchema";
-import { prisma } from "../lib/prisma";
+import { loginSchema } from "../../schema/validSchema";
+import { prisma } from "../../lib/prisma";
 import { compare } from "bcryptjs";
 import jwt from "jsonwebtoken";
 

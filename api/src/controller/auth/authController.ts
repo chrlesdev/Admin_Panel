@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { authUser } from "../schema/validSchema";
-import { prisma } from "../lib/prisma";
+import { authUser } from "../../schema/validSchema";
+import { prisma } from "../../lib/prisma";
 import jwt from "jsonwebtoken";
 import { hash, genSalt } from "bcryptjs";
 

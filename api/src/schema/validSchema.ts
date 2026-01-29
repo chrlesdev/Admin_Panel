@@ -1,5 +1,3 @@
-import e from "express";
-import { platform } from "node:os";
 import { email, z } from "zod";
 
 export const authUser = z.object({
