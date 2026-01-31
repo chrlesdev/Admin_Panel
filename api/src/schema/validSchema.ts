@@ -1,4 +1,4 @@
-import { email, z } from "zod";
+import { date, email, z } from "zod";
 
 export const authUser = z.object({
   name: z.string().min(1, { message: "username is required" }),
@@ -31,4 +31,16 @@ export const variantScema = z.object({
   stock: z.int(),
   sellingPrice: z.float32(),
   costPrice: z.float32().optional(),
+});
+
+export const saleSchema = z.object({
+  shopId: z.string(),
+  productId: z.string(),
+  variantId: z.string().optional(),
+  quantity: z.number().int().min(1, "Quantity must be at least 1"),
+  totalPrice: z.float64(),
+  totalCost: z.float64(),
+  profit: z.float64(),
+  resi: z.string(),
+  saleDate: z.date(),
 });

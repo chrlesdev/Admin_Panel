@@ -4,10 +4,10 @@ import { productSchema } from "../../schema/validSchema";
 
 export async function editProduct(req: Request, res: Response) {
   try {
-    const productId = req.params.productId;
-    if (typeof productId !== "string") {
-      return res.status(400).json({ message: "Invalid Product Item" });
-    }
+    const productId = req.params.productId as string;
+    // if (typeof productId !== "string") {
+    //   return res.status(400).json({ message: "Invalid Product Item" });
+    // }
 
     if (!productId) {
       return res.status(400).json({ message: "Invalid Product Item" });
