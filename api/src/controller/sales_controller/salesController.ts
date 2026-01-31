@@ -25,14 +25,16 @@ export async function sales(req: Request, res: Response) {
       return res.status(404).json({ message: "Shop not found or unauthorized" });
     }
 
-    const productData = productSchema.parse(req.body)
-    const {productName, productStock, productCostPrice, productSellingPrice} = productData
+    const productData = productSchema.parse(req.body);
+    const { productName, productStock, productCostPrice, productSellingPrice } = productData;
+
+    const variantData = variantScema.parse(req.body);
+    const { variantName, costPrice, sellingPrice, stock } = variantData;
 
     const saleData = saleSchema.parse(req.body);
     const { shopId, productId, variantId, quantity, totalPrice, totalCost, profit, resi, saleDate } = saleData;
 
-
-    const total =   
+    // const total =
 
     const product = await prisma.product.findFirst({
       where: {
