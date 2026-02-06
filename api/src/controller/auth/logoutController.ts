@@ -6,7 +6,7 @@ export async function logout(req: Request, res: Response) {
   try {
     const token = req.cookies.token;
     if (!token) {
-      return res.status(401).json({ message: "no token provided" });
+      return res.status(401).json({ message: "please relogin" });
     }
 
     const decode = jwt.verify(token, process.env.JWT_SECRET_KEY as string) as { exp: number };
