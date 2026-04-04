@@ -1,7 +1,9 @@
+import SignInUi from "@/components/SignInUi";
+
 export default function Login() {
   return (
-    <div>
-      <h1>this is Login Page</h1>
+    <div className="p-3 w-screen h-screen">
+      <SignInUi />
     </div>
   );
 }
