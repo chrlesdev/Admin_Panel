@@ -2,6 +2,8 @@ import "dotenv/config";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 import { PrismaClient, Prisma } from "../src/generated/prisma/client";
 import { genSalt, hash } from "bcryptjs";
+import { id } from "zod/v4/locales";
+import { create } from "node:domain";
 
 const adapter = new PrismaMariaDb({
   host: process.env.DATABASE_HOST || "localhost",
@@ -18,204 +20,150 @@ async function main() {
   const salt = await genSalt(10);
   const hashedPassword = await hash("password", salt);
 
-  console.log("🌱 Seeding database...");
-
-  try {
-    await prisma.$connect();
-    console.log("✅ Database connected!");
-  } catch (error) {
-    console.error("❌ Connection failed:", error);
-    throw error;
-  }
-
-  // Clear existing data (optional - be careful in production!)
+  await prisma.retur.deleteMany();
   await prisma.sale.deleteMany();
   await prisma.variant.deleteMany();
   await prisma.product.deleteMany();
+  await prisma.shopAdminAccess.deleteMany();
+  await prisma.admin.deleteMany();
   await prisma.shop.deleteMany();
-  await prisma.user.deleteMany();
+  await prisma.platform.deleteMany();
+  await prisma.owner.deleteMany();
 
-  const userData: Prisma.UserCreateInput[] = [
-    {
-      name: "Alice Seller",
-      email: "alice@mail.com",
+  console.log("🌱 Creating Owner: ");
+  const alice = await prisma.owner.create({
+    data: {
+      name: "Alice",
+      email: "alice@gmail.com",
       password: hashedPassword,
-      phoneNumber: "081234567890",
-      shops: {
+      phoneNumber: "081238484885",
+    },
+  });
+
+  console.log("🌱 Creating Platform & Shop...");
+  const shopee = await prisma.platform.create({
+    data: { name: "Shopee", feePercent: 3.5, fixedFee: 500 },
+  });
+
+  const shop = await prisma.shop.create({
+    data: {
+      shopName: "Alice Official Store",
+      ownerId: alice.id,
+      platformId: shopee.id,
+    },
+  });
+
+  console.log("🌱 Creating Products & Variants...");
+  const productWithVariant = await prisma.product.create({
+    data: {
+      shopId: shop.id,
+      productName: "Uniqlo Airism",
+      hasVariant: true,
+      productStock: 0, // Stock is managed by variants
+      productSellingPrice: 150000,
+      productCostPrice: 80000,
+      variants: {
         create: [
-          {
-            shopName: "Alice Tokopedia Store", // Fixed: ShopName → shopName
-            platform: "tokopedia", // Fixed: platForm → platform
-            products: {
-              create: [
-                {
-                  productName: "Kaos Polos",
-                  productSellingPrice: 50000,
-                  productCostPrice: 30000,
-                  productStock: 0, // Stock in variants
-                  hasVariant: true,
-                  variants: {
-                    create: [
-                      {
-                        variantName: "Merah, M",
-                        stock: 10,
-                        costPrice: 30000,
-                        sellingPrice: 50000,
-                      },
-                      {
-                        variantName: "Biru, L",
-                        stock: 15,
-                        costPrice: 32000,
-                        sellingPrice: 55000,
-                      },
-                    ],
-                  },
-                },
-                {
-                  productName: "Topi Baseball",
-                  productSellingPrice: 75000,
-                  productCostPrice: 40000,
-                  productStock: 25,
-                  hasVariant: false, // No variants
-                },
-              ],
-            },
-          },
-          {
-            shopName: "Alice Shopee Store",
-            platform: "shopee",
-            products: {
-              create: {
-                productName: "Tas Ransel",
-                productSellingPrice: 150000,
-                productCostPrice: 80000,
-                productStock: 30,
-                hasVariant: false,
-              },
-            },
-          },
+          { variantName: "White - L", stock: 20, sellingPrice: 150000, costPrice: 80000 },
+          { variantName: "Black - L", stock: 15, sellingPrice: 160000, costPrice: 85000 },
         ],
       },
     },
-    {
-      name: "Bob Merchant",
-      email: "bob@mail.com",
-      password: hashedPassword,
-      phoneNumber: "082345678901", // Fixed: unique number
-      shops: {
-        create: {
-          shopName: "Bob Electronics",
-          platform: "lazada",
-          products: {
-            create: {
-              productName: "Power Bank 10000mAh",
-              productSellingPrice: 120000,
-              productCostPrice: 70000,
-              productStock: 50,
-              hasVariant: false,
-            },
-          },
-        },
-      },
-    },
-    {
-      name: "Charlie Store",
-      email: "charlie@mail.com",
-      password: hashedPassword,
-      phoneNumber: "083456789012", // Fixed: unique number
-      shops: {
-        create: {
-          shopName: "Charlie Fashion",
-          platform: "tiktokshop",
-          products: {
-            create: {
-              productName: "Sepatu Sneakers",
-              productSellingPrice: 250000,
-              productCostPrice: 150000,
-              productStock: 0,
-              hasVariant: true,
-              variants: {
-                create: [
-                  {
-                    variantName: "Hitam, 40",
-                    stock: 5,
-                    costPrice: 150000,
-                    sellingPrice: 250000,
-                  },
-                  {
-                    variantName: "Putih, 42",
-                    stock: 8,
-                    costPrice: 150000,
-                    sellingPrice: 250000,
-                  },
-                ],
-              },
-            },
-          },
-        },
-      },
-    },
-  ];
-
-  // Create users with shops and products
-  for (const user of userData) {
-    await prisma.user.create({
-      data: user,
-    });
-  }
-
-  console.log("✅ Users, shops, and products created!");
-
-  // Add some sample sales
-  const aliceShop = await prisma.shop.findFirst({
-    where: { shopName: "Alice Tokopedia Store" },
-    include: { products: { include: { variants: true } } },
+    include: { variants: true },
   });
 
-  if (aliceShop) {
-    const kaosPolos = aliceShop.products.find((p) => p.productName === "Kaos Polos");
-    const topiBaseball = aliceShop.products.find((p) => p.productName === "Topi Baseball");
+  console.log("🌱 Creating Admin (Agus)...");
+  // 1. Create Owner (Jack)
+  console.log("🌱 Creating Owner: Jack...");
+  const jack = await prisma.owner.create({
+    data: {
+      name: "Jack",
+      email: "jack@gmail.com",
+      password: hashedPassword,
+      phoneNumber: "081238484325",
+    },
+  });
 
-    if (kaosPolos && kaosPolos.variants.length > 0) {
-      // Sale with variant
-      const variantMerah = kaosPolos.variants[0];
-      await prisma.sale.create({
-        data: {
-          shopId: aliceShop.id,
-          productId: kaosPolos.id,
-          variantId: variantMerah.id,
-          quantity: 2,
-          totalPrice: variantMerah.sellingPrice * 2,
-          totalCost: variantMerah.costPrice ? variantMerah.costPrice * 2 : null,
-          profit: variantMerah.costPrice ? (variantMerah.sellingPrice - variantMerah.costPrice) * 2 : null,
-          resi: "TOKOPEDIA123456",
-          saleDate: new Date("2025-01-20"),
+  // 2. Create Admin (Jack's Employee)
+  // Note: We don't link shops yet because shops don't exist!
+  console.log("🌱 Creating Admin: Jack Admin 1...");
+  const jackAdmin = await prisma.admin.create({
+    data: {
+      name: "Jack Admin 1",
+      email: "admin1@gmail.com",
+      password: hashedPassword,
+      ownerId: jack.id,
+    },
+  });
+
+  // 3. Create Platforms
+  console.log("🌱 Creating Platforms...");
+  const platformTokopedia = await prisma.platform.create({
+    data: { name: "Tokopedia", feePercent: 2.5, fixedFee: 3000 },
+  });
+
+  const platformShopee = await prisma.platform.create({
+    data: { name: "Shopee", feePercent: 4.0, fixedFee: 1000 },
+  });
+
+  // 4. Create Shops (Linked to Jack & Platforms)
+  console.log("🌱 Creating Shops...");
+
+  // Shop A: Jack's Shopee Store
+  const shopShopee = await prisma.shop.create({
+    data: {
+      shopName: "Jack Official Shopee",
+      ownerId: jack.id,
+      platformId: platformShopee.id,
+      products: {
+        create: {
+          productName: "Shopee Exclusive T-Shirt",
+          productStock: 100, // Aggregate stock
+          productCostPrice: 80,
+          productSellingPrice: 250,
+          hasVariant: true,
+          variants: {
+            create: [
+              { variantName: "Red - L", stock: 50, costPrice: 80, sellingPrice: 250 },
+              { variantName: "Red - XL", stock: 50, costPrice: 80, sellingPrice: 250 },
+            ],
+          },
         },
-      });
-    }
+      },
+    },
+  });
 
-    if (topiBaseball) {
-      // Sale without variant
-      await prisma.sale.create({
-        data: {
-          shopId: aliceShop.id,
-          productId: topiBaseball.id,
-          variantId: null, // No variant
-          quantity: 3,
-          totalPrice: topiBaseball.productSellingPrice * 3,
-          totalCost: topiBaseball.productCostPrice ? topiBaseball.productCostPrice * 3 : null,
-          profit: topiBaseball.productCostPrice ? (topiBaseball.productSellingPrice - topiBaseball.productCostPrice) * 3 : null,
-          resi: "TOKOPEDIA789012",
-          saleDate: new Date("2025-01-21"),
+  // Shop B: Jack's Tokopedia Store
+  const shopTokopedia = await prisma.shop.create({
+    data: {
+      shopName: "Jack Official Tokopedia",
+      ownerId: jack.id,
+      platformId: platformTokopedia.id,
+      products: {
+        create: {
+          productName: "Tokopedia Green Hat",
+          productStock: 50,
+          productCostPrice: 20,
+          productSellingPrice: 50,
+          hasVariant: false, // Simple product example
         },
-      });
-    }
-  }
+      },
+    },
+  });
 
-  console.log("✅ Sample sales created!");
-  console.log("🎉 Seeding completed!");
+  // 5. ASSIGN ADMIN TO BOTH SHOPS
+  // This is the critical fix: We link the Admin ID to the Shop IDs (not Platform IDs)
+  console.log("🔗 Linking Admin to Shops...");
+
+  await prisma.shopAdminAccess.createMany({
+    data: [
+      { adminId: jackAdmin.id, shopId: shopShopee.id },
+      { adminId: jackAdmin.id, shopId: shopTokopedia.id },
+    ],
+  });
+
+  console.log("✅ Seeding Success! Jack now has 2 shops and 1 admin managing both.");
 }
-
 main()
   .catch((e) => {
     console.error("❌ Seeding error:", e);

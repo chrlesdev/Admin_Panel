@@ -13,19 +13,6 @@ datasource db {
   provider = "mysql"
 }
 
-model User {
-  id          String  @id @default(uuid())
-  email       String  @unique
-  name        String
-  password    String?
-  googleid    String?
-  phoneNumber String? @unique
-  shops       Shop[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Owner {
   id          String  @id @default(uuid())
   email       String  @unique
@@ -34,10 +21,11 @@ model Owner {
   googleid    String?
   phoneNumber String? @unique
 
+  shops  Shop[]
+  admins Admin[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  shops     Shop[]
-  admins    Admin[]
 }
 
 model Admin {
@@ -49,9 +37,10 @@ model Admin {
   ownerId String
   owner   Owner  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
   shopAdminAccesses shopAdminAccess[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model shopAdminAccess {
@@ -74,24 +63,41 @@ model Token {
 model Shop {
   id String @id @default(uuid())
 
-  userId String
+  ownerId String
+  owner   Owner  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   shopName   String
-  ownerId    String?
   platformId String?
+  platform   Platform? @relation(fields: [platformId], references: [id])
 
   sales             Sale[]
   products          Product[]
+  stockLogs         StockLog[]
   shopAdminAccesses shopAdminAccess[]
-
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  owner    Owner?    @relation(fields: [ownerId], references: [id])
-  platform Platform? @relation(fields: [platformId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([userId])
+  @@index([ownerId]) // Index by Owner, not User
+}
+
+model StockLog {
+  id     String @id @default(uuid())
+  shopId String
+  shop   Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  productId String
+  variantId String?
+
+  changeAmount Int
+  reason       String
+
+  adminId String?
+
+  createdAt DateTime @default(now())
+
+  @@index([shopId])
+  @@index([productId])
 }
 
 model Product {
