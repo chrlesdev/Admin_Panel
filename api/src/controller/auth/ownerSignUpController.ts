@@ -1,20 +1,20 @@
 import { Request, Response } from "express";
-import { authUser } from "../../schema/validSchema";
+import { authOwner } from "../../schema/validSchema";
 import { prisma } from "../../lib/prisma";
 import jwt from "jsonwebtoken";
 import { hash, genSalt } from "bcryptjs";
 
 export async function signUp(req: Request, res: Response) {
   try {
-    const parsedData = authUser.parse(req.body);
+    const parsedData = authOwner.parse(req.body);
     const { name, email, phoneNumber, password } = parsedData;
 
     // Check if user exists
-    const existingUser = await prisma.owner.findUnique({
+    const existingOwner = await prisma.owner.findUnique({
       where: { email },
     });
 
-    if (existingUser) {
+    if (existingOwner) {
       return res.status(409).json({
         error: "User already exists",
       });
@@ -24,8 +24,18 @@ export async function signUp(req: Request, res: Response) {
     const salt = await genSalt(12);
     const hashedPass = await hash(password, salt);
 
+    const phone = await prisma.owner.findUnique({
+      where: {
+        phoneNumber,
+      },
+    });
+
+    if (phone) {
+      return res.status(401).json({ message: "phone number already registered" });
+    }
+
     // Create user
-    const newUser = await prisma.owner.create({
+    const newOwner = await prisma.owner.create({
       data: {
         name,
         email,
@@ -36,13 +46,13 @@ export async function signUp(req: Request, res: Response) {
 
     // Generate JWT
     const jwtPayload = {
-      id: newUser.id,
-      email: newUser.email,
+      id: newOwner.id,
+      email: newOwner.email,
     };
 
     const token = jwt.sign(jwtPayload, process.env.JWT_SECRET_KEY as string, { expiresIn: "7d" });
 
-    res.cookie("token", token, {
+    res.cookie("ownerSignUptoken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
@@ -50,16 +60,16 @@ export async function signUp(req: Request, res: Response) {
     });
 
     return res.status(201).json({
-      message: "User created successfully",
+      message: "Owner created successfully",
       user: {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        phoneNumber: newUser.phoneNumber,
+        id: newOwner.id,
+        name: newOwner.name,
+        email: newOwner.email,
+        phoneNumber: newOwner.phoneNumber,
       },
     });
   } catch (error) {
-    console.error("SignUp error:", error);
+    console.error("SignUp owner error:", error);
     return res.status(500).json({
       error: "Internal server error",
     });
