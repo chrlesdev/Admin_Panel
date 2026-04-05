@@ -1,11 +1,21 @@
 import { Request } from "express";
 
-export interface AuthenticatedUser {
+export interface AuthenticatedOwner {
+  id?: string;
+  email?: string;
+  role?: string;
+}
+
+export interface AuthenticatedAdmin {
   email?: string;
   id?: string;
   role?: string;
 }
 
-export interface RequestWithUserId extends Request {
-  user?: AuthenticatedUser;
+export interface RequestOwnerId extends Request {
+  owner?: AuthenticatedOwner;
+}
+
+export interface RequestAdminId extends Request {
+  admin?: AuthenticatedAdmin;
 }

@@ -1,27 +1,56 @@
 import { Request, Response, NextFunction } from "express";
-import { RequestWithUserId, AuthenticatedUser } from "../types";
+import { AuthenticatedAdmin, AuthenticatedOwner, RequestAdminId, RequestOwnerId } from "../types";
 import jwt from "jsonwebtoken";
 
-export async function verifyUserToken(req: Request, res: Response, next: NextFunction) {
+export async function verifyOwnerToken(req: Request, res: Response, next: NextFunction) {
+  try {
+    const ownerToken = req.cookies.token;
+
+    if (!ownerToken) {
+      return res.status(401).json({ message: "Unauthorized, Please try To login again" });
+    }
+
+    jwt.verify(ownerToken, process.env.JWT_SECRET_KEY as string, (err: any, decoded: any) => {
+      if (err) {
+        return res.status(401).json({ message: "Unauthorized Owner, Please try To login again" });
+      }
+      const payload = decoded as AuthenticatedOwner;
+
+      if (payload.role !== "admin") {
+        return res.status(403).json({ message: "Forbidden only for Admin" });
+      }
+      (req as RequestOwnerId).owner = payload;
+      next();
+    });
+  } catch (error) {
+    console.error("Auth error:", error);
+    return res.status(500).json({
+      message: "Authentication failed",
+    });
+  }
+}
+
+export async function verifyAdminToken(req: Request, res: Response, next: NextFunction) {
   try {
     const token = req.cookies.token;
     if (!token) {
       return res.status(401).json({ message: "please login again" });
     }
 
-    const verifiedUser = jwt.verify(token, process.env.JWT_SECRET_KEY as string);
+    jwt.verify(token, process.env.JWT_SECRET_KEY as string, (err: any, decoded: any) => {
+      if (err) {
+        return res.status(401).json({ message: "Unauthorized Admin, Please try To login again" });
+      }
 
-    if (!verifiedUser) {
-      return res.status(401).json({ message: "token expired, please login again" });
-    }
+      const payload = decoded as AuthenticatedAdmin;
 
-    if (typeof verifiedUser === "string") {
-      return res.status(401).json({ message: "Invalid token" });
-    }
+      if (payload.role !== "admin") {
+        return res.status(403).json({ message: "Forbidden only for Admin" });
+      }
+      (req as RequestAdminId).admin = payload;
 
-    (req as RequestWithUserId).user = verifiedUser as AuthenticatedUser;
-
-    next();
+      next();
+    });
   } catch (error) {
     console.error("Auth error:", error);
     return res.status(500).json({

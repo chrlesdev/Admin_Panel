@@ -6,18 +6,17 @@ import { hash, genSalt } from "bcryptjs";
 
 export async function signUp(req: Request, res: Response) {
   try {
-    // Validate input
     const parsedData = authUser.parse(req.body);
     const { name, email, phoneNumber, password } = parsedData;
 
     // Check if user exists
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.owner.findUnique({
       where: { email },
     });
 
     if (existingUser) {
       return res.status(409).json({
-        error: "User already exists", // ← Fixed message
+        error: "User already exists",
       });
     }
 
@@ -26,7 +25,7 @@ export async function signUp(req: Request, res: Response) {
     const hashedPass = await hash(password, salt);
 
     // Create user
-    const newUser = await prisma.user.create({
+    const newUser = await prisma.owner.create({
       data: {
         name,
         email,
@@ -41,11 +40,7 @@ export async function signUp(req: Request, res: Response) {
       email: newUser.email,
     };
 
-    const token = jwt.sign(
-      jwtPayload,
-      process.env.JWT_SECRET_KEY as string,
-      { expiresIn: "7d" }, // ← Changed to 7 days
-    );
+    const token = jwt.sign(jwtPayload, process.env.JWT_SECRET_KEY as string, { expiresIn: "7d" });
 
     res.cookie("token", token, {
       httpOnly: true,
