@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "../../lib/prisma";
 import jwt from "jsonwebtoken";
 
-export async function logout(req: Request, res: Response) {
+export async function logoutOwner(req: Request, res: Response) {
   try {
     const token = req.cookies.token;
     if (!token) {
@@ -18,7 +18,7 @@ export async function logout(req: Request, res: Response) {
       },
     });
 
-    res.clearCookie("token");
+    res.clearCookie("ownerToken");
 
     res.status(200).json({ message: "Successfully logged out", ok: true });
   } catch (error) {

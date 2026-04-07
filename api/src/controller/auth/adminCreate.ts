@@ -6,9 +6,6 @@ import { RequestOwnerId } from "../../types";
 import { hash, genSalt } from "bcryptjs";
 
 export async function adminSignUp(req: Request, res: Response) {
-  /**
-   * Error : Harus Ambil Owner Id dly menggunakan Request Owner Id
-   */
   try {
     const Owner = (req as RequestOwnerId).owner;
 
@@ -48,7 +45,7 @@ export async function adminSignUp(req: Request, res: Response) {
 
     const token = jwt.sign(jwtPayload, process.env.JWT_SECRET_KEY as string, { expiresIn: "7d" });
 
-    res.cookie("AdminSignUpToken", token, {
+    res.cookie("adminToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",

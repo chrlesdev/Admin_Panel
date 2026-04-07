@@ -52,7 +52,7 @@ export async function signUp(req: Request, res: Response) {
 
     const token = jwt.sign(jwtPayload, process.env.JWT_SECRET_KEY as string, { expiresIn: "7d" });
 
-    res.cookie("ownerSignUptoken", token, {
+    res.cookie("OwnerToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
