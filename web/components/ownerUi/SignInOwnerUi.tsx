@@ -3,7 +3,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import Link from "next/link";
+import { useState, useEffect } from "react";
 
+// Your specific imports
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupAddon } from "@/components/ui/input-group";
@@ -14,7 +17,7 @@ const formSchema = z.object({
   password: z.string().min(6, "Password must be 6+ characters"),
 });
 
-export default function SignUpUi() {
+export default function SignInUi() {
   const {
     register,
     handleSubmit,
@@ -37,7 +40,7 @@ export default function SignUpUi() {
       {/* Left Section: Functional Auth Form */}
       <div className="flex-1 w-full max-w-sm">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold tracking-tight">Admin Login</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Owner Login</h1>
           <p className="text-sm text-slate-500">POS System • Store Management</p>
         </div>
 
@@ -64,9 +67,11 @@ export default function SignUpUi() {
             </Field>
           </FieldGroup>
 
-          <Button type="submit" className="w-full">
-            Authenticate & Launch
-          </Button>
+          <Link href="/owner/dashboard">
+            <Button type="submit" className="w-full">
+              Authenticate & Launch
+            </Button>
+          </Link>
         </form>
       </div>
 

@@ -1,4 +1,4 @@
-import SignInUi from "@/components/SignInUi";
+import SignInUi from "@/components/ownerUi/SignInOwnerUi";
 
 export default function Login() {
   return (
