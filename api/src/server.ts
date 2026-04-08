@@ -22,7 +22,7 @@ app.use(
   }),
 );
 
-app.use("/api/v1", authRoute);
+app.use("/api/v1/auth", authRoute);
 app.use("api/v1/admin", verifyOwnerToken, adminRoute);
 // app.use("/api/v1/shop", verifyUserToken, shopRoute);
 // app.use("/api/v1/product", verifyUserToken, productRoute);
