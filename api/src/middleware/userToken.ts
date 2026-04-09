@@ -4,7 +4,9 @@ import jwt from "jsonwebtoken";
 
 export async function verifyOwnerToken(req: Request, res: Response, next: NextFunction) {
   try {
-    const ownerToken = req.cookies.token;
+    const ownerToken = req.cookies.ownerToken;
+    console.log("ownerToken Guard :", ownerToken);
+    console.log("req as owner", (req as RequestOwnerId).owner?.id);
 
     if (!ownerToken) {
       return res.status(401).json({ message: "Unauthorized, Please try To login again" });
@@ -16,7 +18,7 @@ export async function verifyOwnerToken(req: Request, res: Response, next: NextFu
       }
       const payload = decoded as AuthenticatedOwner;
 
-      if (payload.role !== "admin") {
+      if (payload.role === "admin") {
         return res.status(403).json({ message: "Forbidden only for Admin" });
       }
       (req as RequestOwnerId).owner = payload;

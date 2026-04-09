@@ -1,4 +1,4 @@
-import SignUpUi from "@/components/SignUpUi";
+import SignUpUi from "@/components/ownerUi/SignUpUi";
 
 export default function SignUp() {
   return (

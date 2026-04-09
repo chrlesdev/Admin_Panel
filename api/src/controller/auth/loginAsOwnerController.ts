@@ -27,7 +27,7 @@ export async function loginAsOwner(req: Request, res: Response) {
 
     const isProduction = process.env.NODE_ENV === "production";
 
-    res.cookie("token", token, {
+    res.cookie("ownerToken", token, {
       //cokkie nama token, value nya
       httpOnly: true,
       secure: isProduction,

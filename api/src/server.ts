@@ -7,7 +7,8 @@ import { verifyOwnerToken } from "./middleware/userToken";
 
 import authRoute from "./routes/authRoute";
 import adminRoute from "./routes/adminRoute";
-// import shopRoute from "./routes/shopRoute";
+import shopRoute from "./routes/shopRoute";
+import ownerRoute from "./routes/ownerRoute";
 // import productRoute from "./routes/prouctRoute";
 // import variantRoute from "./routes/variantRoute";
 
@@ -24,7 +25,8 @@ app.use(
 
 app.use("/api/v1/auth", authRoute);
 app.use("api/v1/admin", verifyOwnerToken, adminRoute);
-// app.use("/api/v1/shop", verifyUserToken, shopRoute);
+app.use("/api/v1/shop", verifyOwnerToken, shopRoute);
+app.use("/api/v1/owner", verifyOwnerToken, ownerRoute);
 // app.use("/api/v1/product", verifyUserToken, productRoute);
 // app.use("/api/v1/variant", verifyUserToken, variantRoute);
 

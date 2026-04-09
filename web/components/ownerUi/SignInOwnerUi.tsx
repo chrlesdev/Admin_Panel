@@ -27,7 +27,6 @@ export default function SignInUi() {
     mode: "onBlur",
   });
 
-  // Track loading state to disable button during fetch
   const { isSubmitting } = form.formState;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -39,14 +38,13 @@ export default function SignInUi() {
       });
 
       const data = await response.json();
+      console.log("data yang dikirim : ", response);
 
       if (response.ok) {
-        // Better to check response.ok than data.ok
         toast.success("Welcome back! Redirecting...");
         form.reset();
         router.push("/owner/dashboard");
       } else {
-        // Handle specific backend errors if available, else default message
         toast.error(data.message || "Account not found. Please register.");
       }
     } catch (error) {
