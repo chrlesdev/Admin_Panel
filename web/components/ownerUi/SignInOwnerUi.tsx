@@ -34,11 +34,11 @@ export default function SignInUi() {
       const response = await fetch("http://localhost:8000/api/v1/auth/ownerLogin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(values),
       });
 
       const data = await response.json();
-      console.log("data yang dikirim : ", response);
 
       if (response.ok) {
         toast.success("Welcome back! Redirecting...");

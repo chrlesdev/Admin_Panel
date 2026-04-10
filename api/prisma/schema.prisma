@@ -152,7 +152,7 @@ model Variant {
 
 model Platform {
   id         String @id @default(uuid())
-  name       String @unique
+  name       String
   feePercent Float  @default(0)
   fixedFee   Float  @default(0)
   shops      Shop[]

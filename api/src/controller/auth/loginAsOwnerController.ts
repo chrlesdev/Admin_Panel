@@ -31,8 +31,8 @@ export async function loginAsOwner(req: Request, res: Response) {
       //cokkie nama token, value nya
       httpOnly: true,
       secure: isProduction,
-      sameSite: "lax",
-      maxAge: 15 * 60 * 1000,
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({ message: "loggin success", ok: true });
