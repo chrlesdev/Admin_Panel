@@ -23,7 +23,7 @@ export async function loginAsOwner(req: Request, res: Response) {
     if (!isValidPassword) return res.status(401).json({ message: "Invalid Email / Password", ok: false });
 
     const jwtPayload = { id: owner.id };
-    const token = jwt.sign(jwtPayload, process.env.JWT_SECRET_KEY as string, { expiresIn: "15m" });
+    const token = jwt.sign(jwtPayload, process.env.JWT_SECRET_KEY as string, { expiresIn: "1d" });
 
     const isProduction = process.env.NODE_ENV === "production";
 
