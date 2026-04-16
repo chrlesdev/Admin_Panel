@@ -9,7 +9,7 @@ import authRoute from "./routes/authRoute";
 import adminRoute from "./routes/adminRoute";
 import shopRoute from "./routes/shopRoute";
 import ownerRoute from "./routes/ownerRoute";
-// import productRoute from "./routes/prouctRoute";
+import productRoute from "./routes/prouctRoute";
 // import variantRoute from "./routes/variantRoute";
 
 const app = express();
@@ -27,7 +27,7 @@ app.use("/api/v1/auth", authRoute);
 app.use("api/v1/admin", verifyOwnerToken, adminRoute);
 app.use("/api/v1/shop", verifyOwnerToken, shopRoute);
 app.use("/api/v1/owner", verifyOwnerToken, ownerRoute);
-// app.use("/api/v1/product", verifyUserToken, productRoute);
+app.use("/api/v1/product", verifyOwnerToken, productRoute);
 // app.use("/api/v1/variant", verifyUserToken, variantRoute);
 
 const PORT = 8000;

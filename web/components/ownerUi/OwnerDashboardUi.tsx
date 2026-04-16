@@ -85,7 +85,6 @@ export default function DashboardUi() {
               </div>
             ))}
 
-            {/* Refined "Create Shop" Action */}
             <button className="group h-[160] flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-zinc-800 bg-transparent transition-all hover:bg-zinc-900/40 hover:border-zinc-600 cursor-pointer">
               <div className="p-2 rounded-full bg-zinc-900 border border-zinc-800 group-hover:scale-110 transition-transform">
                 <Plus size={24} className="text-zinc-500 group-hover:text-white" />

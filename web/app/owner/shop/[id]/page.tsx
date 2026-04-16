@@ -9,22 +9,46 @@ interface shopDetaill {
   ownerId: string;
 }
 
+interface productDetail {
+  id: string;
+  productName: string;
+  producStock: Int32Array;
+  productCostPrice: Float16Array;
+  productSellingPrice: Float16Array;
+}
+
 export default function ShopDetails() {
   const params = useParams();
   const shopId = params.id;
 
   const [shopDetail, setShopDetail] = useState<shopDetaill>();
+  const [productDetails, setProductDetails] = useState<any[]>([]);
 
   useEffect(() => {
     if (!shopId) return;
 
     const fetchShopDetail = async () => {
-      // Now you can use the ID from the URL to fetch data for ONLY this shop
       const response = await fetch(`http://localhost:8000/api/v1/shop/${shopId}`, {
         method: "GET",
         credentials: "include",
       });
       const data = await response.json();
+
+      const productResponse = await fetch(`http://localhost:8000/api/v1/product/${shopId}/product`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      const productData = await productResponse.json();
+      console.log("product Data : ", productData.data);
+
+      if (productData.data && productData.data[0]?.products) {
+        setProductDetails(productData.data[0].products);
+      } else {
+        setProductDetails(productData.data);
+      }
+
+      setProductDetails(productData.data);
       setShopDetail(data.data);
     };
 
@@ -39,6 +63,13 @@ export default function ShopDetails() {
       {shopDetail && (
         <div className="mt-6 p-6 bg-zinc-900 border border-zinc-800 rounded-xl">
           <h2 className="text-xl">{shopDetail.shopName}</h2>
+          <div>
+            {productDetails.map((product) => (
+              <div key={product.id}>product Name: {product.products.id}</div>
+            ))}
+
+            <p>Total Products: {productDetails.length}</p>
+          </div>
         </div>
       )}
     </div>
