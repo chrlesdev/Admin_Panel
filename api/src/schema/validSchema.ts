@@ -21,8 +21,10 @@ export const loginSchema = z.object({
 });
 
 export const shopSchema = z.object({
-  shopName: z.string().min(1, { message: "shop name is required" }),
-  platform: z.string().min(1, { message: "platform name is required" }),
+  shopName: z.string().min(3, "Shop name is required"),
+  platformName: z.string().min(3, "Platform name is required"),
+  feePercent: z.number().min(0, "Cannot be negative"),
+  fixedFee: z.number().min(0, "Cannot be negative"),
 });
 
 export const productSchema = z.object({

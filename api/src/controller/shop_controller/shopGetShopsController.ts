@@ -5,6 +5,7 @@ import { RequestOwnerId } from "../../types";
 export async function getAllShop(req: Request, res: Response) {
   try {
     const ownerId = (req as RequestOwnerId).owner?.id;
+    const shopId = req.body;
 
     const owner = await prisma.owner.findUnique({
       where: {
@@ -12,13 +13,20 @@ export async function getAllShop(req: Request, res: Response) {
       },
     });
 
-    if (!ownerId) {
+    if (!owner) {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
     const shopData = await prisma.shop.findMany({
       where: {
         ownerId,
+      },
+      include: {
+        platform: {
+          where: {
+            id: shopId,
+          },
+        },
       },
     });
 
