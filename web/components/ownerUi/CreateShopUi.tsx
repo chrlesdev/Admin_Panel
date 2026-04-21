@@ -1,32 +1,43 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Store, ArrowRight, Loader2 } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { Store, Percent, CircleDollarSign, Loader2, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
+// Use coerce to convert string input to numbers automatically
 const shopSchema = z.object({
-  shopName: z.string().min(3, "Shop name must be at least 3 characters"),
-  category: z.string().min(2, "Please specify a category (e.g., Cafe, Retail)"),
+  shopName: z.string().min(3, "Shop name is required"),
+  platformName: z.string().min(3, "Platform name is required"),
+  feePercent: z.coerce.number().min(0, "Cannot be negative"),
+  fixedFee: z.coerce.number().min(0, "Cannot be negative"),
 });
 
-export default function CreateShopUi() {
-  const [open, setOpen] = useState(false);
+type ShopFormValues = {
+  shopName: string;
+  platformName: string;
+  feePercent: number;
+  fixedFee: number;
+};
 
-  const form = useForm<z.infer<typeof shopSchema>>({
-    resolver: zodResolver(shopSchema),
+export default function CreateShopUi() {
+  const form = useForm<ShopFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(shopSchema) as any,
     defaultValues: {
       shopName: "",
-      category: "",
+      platformName: "",
+      feePercent: 0,
+      fixedFee: 0,
     },
   });
+
+  const router = useRouter();
 
   const { isSubmitting } = form.formState;
 
@@ -35,13 +46,13 @@ export default function CreateShopUi() {
       const response = await fetch("http://localhost:8000/api/v1/shop/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(values),
       });
 
       if (response.ok) {
-        toast.success("Shop created! Launching dashboard...");
-        setOpen(false);
-        // router.push("/owner/dashboard") would go here
+        toast.success("Shop created successfully!");
+        router.push("/owner/dashboard");
       } else {
         toast.error("Failed to create shop");
       }
@@ -52,70 +63,87 @@ export default function CreateShopUi() {
   }
 
   return (
-    <main className="flex w-full h-screen justify-center items-center bg-slate-50 p-8">
-      <div className="text-center space-y-6">
-        {/* Empty State UI */}
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-200">
-            <Store className="text-slate-400" size={40} />
+    <main className="flex flex-col justify-center items-center bg-slate-50 min-h-screen w-full p-4">
+      <div className="bg-white border border-slate-200 shadow-xl rounded-2xl p-8 w-full max-w-[550]">
+        {/* Header Section */}
+        <div className="flex flex-col items-center text-center mb-10">
+          <div className="p-3 bg-blue-50 rounded-full mb-4">
+            <Store className="text-blue-600" size={32} />
           </div>
-          <div className="space-y-1">
-            <h1 className="text-2xl font-bold">No Shop Found</h1>
-            <p className="text-slate-500">You haven&apos; t registered a business yet.</p>
-          </div>
+          <h1 className="font-bold text-3xl text-slate-900">Setup Your Store</h1>
+          <p className="text-slate-500 mt-2">Configure your shop details and platform fees</p>
         </div>
 
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger className="h-16 px-8 text-lg rounded-2xl shadow-md gap-3 hover:scale-105 transition-transform">
-            Create New Shop
-            <Plus size={20} />
-          </DialogTrigger>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FieldGroup className="space-y-5">
+            <Controller
+              name="shopName"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel className="text-slate-700 font-medium">Owner Store Name</FieldLabel>
+                  <Input {...field} placeholder="e.g. Tangerang Central Coffee" disabled={isSubmitting} />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
 
-          <DialogContent className="sm:max-w-[425] p-8">
-            <DialogHeader>
-              <DialogTitle className="text-2xl">Register Business</DialogTitle>
-              <DialogDescription>Set up your store details to start managing inventory.</DialogDescription>
-            </DialogHeader>
+            <Controller
+              name="platformName"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel className="text-slate-700 font-medium">Platform Name</FieldLabel>
+                  <Input {...field} placeholder="e.g. GoFood, GrabFood, or Offline" disabled={isSubmitting} />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
 
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-4">
-              <FieldGroup>
-                <Controller
-                  name="shopName"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel>Shop Name</FieldLabel>
-                      <Input {...field} placeholder="e.g. Ember & Oak Cafe" disabled={isSubmitting} />
-                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                    </Field>
-                  )}
-                />
-
-                <Controller
-                  name="category"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel>Business Category</FieldLabel>
-                      <Input {...field} placeholder="e.g. Food & Beverage" disabled={isSubmitting} />
-                      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                    </Field>
-                  )}
-                />
-              </FieldGroup>
-
-              <Button type="submit" className="w-full h-12 gap-2" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <Loader2 className="animate-spin" size={18} />
-                ) : (
-                  <>
-                    Launch Store <ArrowRight size={18} />
-                  </>
+            {/* Fees Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Controller
+                name="feePercent"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel className="text-slate-700 font-medium flex items-center gap-2">
+                      <Percent size={14} /> Fee Percentage
+                    </FieldLabel>
+                    <Input {...field} type="number" placeholder="20" disabled={isSubmitting} />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
                 )}
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
+              />
+
+              <Controller
+                name="fixedFee"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel className="text-slate-700 font-medium flex items-center gap-2">
+                      <CircleDollarSign size={14} /> Fixed Fee
+                    </FieldLabel>
+                    <Input {...field} type="number" placeholder="1000" disabled={isSubmitting} />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
+            </div>
+          </FieldGroup>
+
+          <Button type="submit" className="w-full h-12 text-lg font-semibold mt-4 shadow-sm" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <Loader2 className="animate-spin mr-2" />
+            ) : (
+              <span className="flex items-center gap-2">
+                Create Shop & Launch <ArrowRight size={18} />
+              </span>
+            )}
+          </Button>
+        </form>
+
+        <p className="text-center text-xs text-slate-400 mt-8 uppercase tracking-widest">POS System Management v1.0</p>
       </div>
     </main>
   );
