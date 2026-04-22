@@ -1,72 +1,68 @@
+"use client";
+
+import { LayoutGrid } from "lucide-react";
 import { Button } from "./ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
 
 export default function NavbarUi() {
   return (
-    <div className="flex w-screen justify-between items-center gap-20 p-4">
-      <div className="flex w-screen">
-        <Link href={"/"}>Admin Panel</Link>
-      </div>
-      <div className="flex w-full justify-end gap-5">
-        <Button variant={"outline"} className="rounded-md">
-          Home
-        </Button>
-        <Button variant={"outline"} className="rounded-md">
-          About Us
-        </Button>
-        <Button variant={"outline"} className="rounded-md">
-          Price
-        </Button>
-        <div className="h-10 w-[1] bg-slate-300 dark:bg-slate-800 mx-2" />
+    <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
+      <div className="max-w-7xl mx-auto flex justify-between items-center h-20 px-6">
+        {/* LOGO SECTION */}
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="bg-slate-900 p-2 rounded-xl text-white group-hover:bg-indigo-600 transition-colors">
+            <LayoutGrid size={22} />
+          </div>
+          <span className="text-xl font-black tracking-tighter uppercase text-slate-900">
+            Console<span className="text-indigo-600">POS</span>
+          </span>
+        </Link>
 
-        <Dialog>
-          <DialogTrigger className="rounded-md border border-gray-200 p-2 h-10 hover:bg-gray-100 mr-5 cursor-pointer">Start Now</DialogTrigger>
+        {/* CENTER LINKS - HIDDEN ON MOBILE */}
+        <div className="hidden md:flex items-center gap-8">
+          {["Home", "About", "Pricing"].map((item) => (
+            <Link key={item} href={`#${item.toLowerCase()}`} className=" font-black uppercase tracking-[0.2em] text-slate-400 hover:text-indigo-600 transition-colors">
+              {item}
+            </Link>
+          ))}
+        </div>
 
-          <DialogContent className="max-w-3xl p-0 overflow-hidden">
-            <div className="flex flex-col h-full">
-              <div className="flex flex-col md:flex-row border-b">
-                <div className="flex-1 p-8">
-                  <DialogHeader className="items-center text-center mb-6">
-                    <DialogTitle className="text-xl font-bold tracking-tight text-slate-800">Welcome Back</DialogTitle>
-                    <DialogDescription>Access your owner dashboard.</DialogDescription>
-                  </DialogHeader>
+        {/* ACTION SECTION */}
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:block h-6 w-[1] bg-slate-200 mx-2" />
 
-                  <div className="space-y-4">
-                    <Link href="/form/ownerLogin" className="flex justify-center items-center h-10 rounded-lg w-full border border-slate-300 hover:bg-slate-200 transition-colors font-medium text-sm">
-                      Log In
-                    </Link>
-                  </div>
-                </div>
+          <Sheet>
+            <SheetTrigger>
+              <Button className="...">Deploy System</Button>
+            </SheetTrigger>
+            <SheetContent className="w-[400] sm:w-[540] flex flex-col gap-8 p-12">
+              <SheetHeader>
+                <SheetTitle className="text-3xl font-black uppercase tracking-tighter">Access Gate</SheetTitle>
+              </SheetHeader>
 
-                <div className="hidden md:block w-px bg-slate-200 my-8" />
+              <div className="flex flex-col gap-4">
+                {/* Option 1: Owner */}
+                <Link href="/form/ownerLogin" className="p-6 border rounded-2xl hover:border-indigo-600 transition-all group">
+                  <h4 className="font-bold text-slate-900 group-hover:text-indigo-600">Owner Terminal</h4>
+                  <p className="text-sm text-slate-500">Resume your business session.</p>
+                </Link>
 
-                <div className="flex-1 p-8 bg-slate-50/50">
-                  <DialogHeader className="items-center text-center mb-6">
-                    <DialogTitle className="text-xl font-bold tracking-tight text-slate-800">New Business</DialogTitle>
-                    <DialogDescription>Register a new account.</DialogDescription>
-                  </DialogHeader>
+                {/* Option 2: Sign Up */}
+                <Link href="/form/signUp" className="p-6 bg-slate-900 rounded-2xl group">
+                  <h4 className="font-bold text-white">Initialize New Business</h4>
+                  <p className="text-sm text-slate-400">Deploy a new retail infrastructure.</p>
+                </Link>
 
-                  <div className="space-y-4">
-                    <Link href="/form/signUp" className="flex justify-center items-center h-10 rounded-lg w-full bg-slate-900 text-white hover:bg-slate-800 transition-colors font-medium text-sm mt-11">
-                      Create Account
-                    </Link>
-                  </div>
-                </div>
+                {/* Option 3: Admin */}
+                <Link href="/form/adminLogin" className="mt-auto text-center text-xs font-black text-slate-400 uppercase tracking-widest hover:text-slate-900">
+                  System Root Access →
+                </Link>
               </div>
-
-              <div className="p-8 bg-white">
-                <div className="flex flex-col items-center justify-center text-center">
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">Internal System</h3>
-                  <Link href="/form/adminLogin" className="text-sm font-medium text-slate-600 hover:text-slate-900 underline underline-offset-4">
-                    Login as system admin →
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
-    </div>
+    </nav>
   );
 }
