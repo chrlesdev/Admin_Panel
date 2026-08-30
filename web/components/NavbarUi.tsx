@@ -34,7 +34,7 @@ export default function NavbarUi() {
 
           <Sheet>
             <SheetTrigger>
-              <Button className="...">Deploy System</Button>
+              <h1>Deploy System</h1>
             </SheetTrigger>
             <SheetContent className="w-[400] sm:w-[540] flex flex-col gap-8 p-12">
               <SheetHeader>

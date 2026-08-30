@@ -7,7 +7,7 @@ import * as z from "zod";
 // Your specific imports
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { InputGroup, InputGroupAddon } from "@/components/ui/input-group";
+import { InputGroup } from "@/components/ui/input-group";
 import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({

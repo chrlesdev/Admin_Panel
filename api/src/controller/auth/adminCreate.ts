@@ -14,7 +14,7 @@ export async function adminSignUp(req: Request, res: Response) {
     }
 
     const parsedData = authAdmin.parse(req.body);
-    const { name, email, password } = parsedData;
+    const { name, email, password, Roles } = parsedData;
 
     const existingAdmin = await prisma.admin.findUnique({
       where: {
@@ -35,6 +35,7 @@ export async function adminSignUp(req: Request, res: Response) {
         email: email,
         password: hashedPass,
         ownerId: Owner.id,
+        roles: Roles,
       },
     });
 

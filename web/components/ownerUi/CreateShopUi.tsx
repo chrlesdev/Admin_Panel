@@ -10,12 +10,11 @@ import { toast } from "sonner";
 import { Store, Percent, CircleDollarSign, Loader2, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-// Use coerce to convert string input to numbers automatically
 const shopSchema = z.object({
   shopName: z.string().min(3, "Shop name is required"),
   platformName: z.string().min(3, "Platform name is required"),
-  feePercent: z.coerce.number().min(0, "Cannot be negative"),
-  fixedFee: z.coerce.number().min(0, "Cannot be negative"),
+  feePercent: z.coerce.number().min(1, "Cannot be negative, Required"),
+  fixedFee: z.coerce.number().min(1, "Cannot be negative, Required"),
 });
 
 type ShopFormValues = {
@@ -100,7 +99,6 @@ export default function CreateShopUi() {
               )}
             />
 
-            {/* Fees Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Controller
                 name="feePercent"

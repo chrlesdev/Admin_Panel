@@ -2,7 +2,9 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Package, ArrowLeft, Plus, Search, MoreVertical, Store, Tag } from "lucide-react";
+import { Package, ArrowLeft, Plus, Search, Edit3, MoreVertical, Store, Tag } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -60,7 +62,6 @@ export default function ShopDetails() {
   return (
     <div className="min-h-screen bg-slate-50 p-6 md:p-12 text-slate-900">
       <div className="max-w-7xl mx-auto">
-        {/* Breadcrumb / Back Link */}
         <Link href="/owner/dashboard" className="flex items-center gap-2 text-slate-500 hover:text-blue-600 transition-colors mb-10 text-sm font-semibold group w-fit">
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
           BACK TO DASHBOARD
@@ -83,11 +84,11 @@ export default function ShopDetails() {
 
           <div className="flex items-center gap-3">
             <Button variant="outline" className="bg-white border-slate-200 text-slate-600 font-bold uppercase text-xs h-11 px-5 shadow-sm">
-              <Search size={16} className="mr-2" /> Filter
+              <Search size={16} className="mr-2" /> Search Product
             </Button>
-            <Button className="bg-slate-900 text-white font-bold uppercase text-xs h-11 px-5 shadow-lg hover:bg-blue-700 transition-all">
+            <Link href={"/owner/product/newProduct"} className="bg-slate-900 text-white font-bold uppercase text-xs h-11 px-5 shadow-lg hover:bg-blue-700 transition-all">
               <Plus size={16} className="mr-2" /> Add Product
-            </Button>
+            </Link>
           </div>
         </div>
 
@@ -134,9 +135,25 @@ export default function ShopDetails() {
                     </td>
                     <td className="px-8 py-6 font-bold text-slate-600">Rp {product.productSellingPrice.toLocaleString()}</td>
                     <td className="px-8 py-6 text-right">
-                      <button className="p-2 text-slate-300 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all">
-                        <MoreVertical size={18} />
-                      </button>
+                      <Dialog>
+                        <DialogTrigger className="p-2 text-slate-300 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all">
+                          <MoreVertical size={18} />
+                        </DialogTrigger>
+                        <DialogContent>
+                          <div className="w-full flex items-center justify-start gap-4 h-16 px-6 font-bold border border-slate-100 bg-slate-50 hover:bg-white hover:border-indigo-300 rounded-2xl transition-all cursor-pointer group/btn">
+                            <div className="p-2 bg-white rounded-lg border border-slate-200 group-hover/btn:bg-indigo-50 group-hover/btn:border-indigo-100">
+                              <Edit3 size={18} className="text-slate-600 group-hover/btn:text-indigo-600" />
+                            </div>
+                            <span className="text-slate-700 tracking-tight">Edit Product</span>
+                          </div>
+                          <div className="w-full flex items-center justify-start gap-4 h-16 px-6 font-bold border border-slate-100 bg-slate-50 hover:bg-white hover:border-indigo-300 rounded-2xl transition-all cursor-pointer group/btn">
+                            <div className="p-2 bg-white rounded-lg border border-slate-200 group-hover/btn:bg-indigo-50 group-hover/btn:border-indigo-100">
+                              <Edit3 size={18} className="text-slate-600 group-hover/btn:text-indigo-600" />
+                            </div>
+                            <span className="text-slate-700 tracking-tight">Delete Product</span>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
                     </td>
                   </tr>
                 ))}
@@ -147,7 +164,7 @@ export default function ShopDetails() {
           {productDetails.length === 0 && !loading && (
             <div className="p-20 text-center flex flex-col items-center justify-center">
               <div className="p-4 bg-slate-50 rounded-full mb-4">
-                <Package size={32} className="text-slate-300" />
+                <Package size={32} className="text-slate-900" />
               </div>
               <p className="text-slate-500 font-bold uppercase text-xs tracking-widest">No Products Found</p>
               <p className="text-slate-400 text-sm mt-1">Start by adding your first item to this marketplace.</p>

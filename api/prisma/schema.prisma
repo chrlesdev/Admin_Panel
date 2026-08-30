@@ -33,6 +33,7 @@ model Admin {
   email    String @unique
   name     String
   password String
+  roles    Roles
 
   ownerId String
   owner   Owner  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
@@ -207,4 +208,14 @@ enum Status {
   SOLD
   RETURN
   LOSS
+}
+
+enum Roles {
+  OWNER
+  ADMIN
+}
+
+enum shop {
+  ACTIVE
+  INACTIVE
 }

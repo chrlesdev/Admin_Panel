@@ -1,4 +1,5 @@
 import { date, email, z } from "zod";
+import { Roles } from "../generated/prisma/enums";
 
 export const authOwner = z.object({
   name: z.string().min(1, { message: "username is required" }),
@@ -13,6 +14,7 @@ export const authAdmin = z.object({
   name: z.string().min(1, { message: "username is required" }),
   email: z.string().email({ message: "Email is required" }),
   password: z.string().min(8, { message: "Password must be at least 8 characters long" }),
+  Roles: z.enum(Roles),
 });
 
 export const loginSchema = z.object({

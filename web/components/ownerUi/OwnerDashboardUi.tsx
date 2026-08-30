@@ -71,7 +71,6 @@ export default function DashboardUi() {
   return (
     <main className="min-h-screen bg-slate-50 p-6 md:p-12">
       <div className="max-w-7xl mx-auto">
-        {/* TOP COMMAND BAR */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
           <div className="space-y-2">
             <div className="flex items-center gap-3">
@@ -120,7 +119,6 @@ export default function DashboardUi() {
                 >
                   <div className="min-w-0">
                     {" "}
-                    {/* min-w-0 is vital for text truncation in flex items */}
                     <div className="flex justify-between items-start mb-6">
                       <div className="p-4 bg-slate-50 rounded-2xl text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-inner shrink-0">
                         <Store size={28} />
@@ -198,7 +196,8 @@ export default function DashboardUi() {
                       onClick={() => router.push(`/owner/shop/${shop.id}`)}
                       className="flex-1 h-16 flex items-center justify-center gap-3 bg-slate-900 hover:bg-indigo-600 text-white rounded-[20] text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-[0.98]"
                     >
-                      Access Terminal <ArrowRight size={18} />
+                      Access Shop
+                      <ArrowRight size={18} />
                     </Button>
                   </div>
                 </div>

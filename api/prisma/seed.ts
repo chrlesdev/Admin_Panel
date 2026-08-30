@@ -82,13 +82,12 @@ async function main() {
     },
   });
 
-  // 2. Create Admin (Jack's Employee)
-  // Note: We don't link shops yet because shops don't exist!
   console.log("🌱 Creating Admin: Jack Admin 1...");
   const jackAdmin = await prisma.admin.create({
     data: {
       name: "Jack Admin 1",
       email: "admin1@gmail.com",
+      roles: "ADMIN",
       password: hashedPassword,
       ownerId: jack.id,
     },

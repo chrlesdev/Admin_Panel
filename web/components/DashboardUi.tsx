@@ -29,7 +29,7 @@ export default function MainLandingUi() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start">
-              <Link href="/owner/dashboard">
+              <Link href="/form/roles">
                 <Button className="h-16 px-10 bg-slate-900 hover:bg-indigo-600 text-white rounded-2xl font-bold uppercase tracking-widest text-xs transition-all shadow-xl shadow-indigo-100 active:scale-95">
                   Launch Console <ArrowRight className="ml-2" size={18} />
                 </Button>
