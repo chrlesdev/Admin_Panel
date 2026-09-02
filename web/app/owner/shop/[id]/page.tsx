@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Package, ArrowLeft, Plus, Search, Edit3, MoreVertical, Store, Tag } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -86,7 +86,7 @@ export default function ShopDetails() {
             <Button variant="outline" className="bg-white border-slate-200 text-slate-600 font-bold uppercase text-xs h-11 px-5 shadow-sm">
               <Search size={16} className="mr-2" /> Search Product
             </Button>
-            <Link href={"/owner/product/newProduct"} className="bg-slate-900 text-white font-bold uppercase text-xs h-11 px-5 shadow-lg hover:bg-blue-700 transition-all">
+            <Link href={`/owner/shop/${shopId}/product/createProduct`} className="bg-slate-900 text-white font-bold uppercase text-xs h-11 px-5 shadow-lg hover:bg-blue-700 transition-all">
               <Plus size={16} className="mr-2" /> Add Product
             </Link>
           </div>

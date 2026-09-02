@@ -32,6 +32,7 @@ export const shopSchema = z.object({
 export const productSchema = z.object({
   productName: z.string().min(1, { message: "product name is required" }),
   productStock: z.int(),
+  hasVariants: z.boolean().default(false),
   productCostPrice: z.float32().optional(),
   productSellingPrice: z.float32(),
 });
